@@ -5,6 +5,9 @@ Get distance by using opencv for my study
 (논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
 
+yolov2-pytorch버전을 포크해와 수정
+
+
 해야할일) yolo를 이용해 예제 학습해보기(바운딩박스 관련)
 loss func 직접구현 해보기
 label 데이터 전처리 (class c, 중심점 x, y, 바운딩박스 w, h , 객체거리 p)
