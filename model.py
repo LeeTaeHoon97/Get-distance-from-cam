@@ -27,7 +27,7 @@ class Yolo(nn.Module):
         self.darknet_conv10 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False))
         self.darknet_conv11 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))
         self.darknet_conv12 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False))
-        self.darknet_conv13 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))
+        self.darknet_conv13 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))   #이부분에서 shortcut으로도 전달
         self.darknet_maxpool13_2 = nn.Sequential(nn.MaxPool2d(2, 2))
         
         self.darknet_conv14 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False))
@@ -46,7 +46,8 @@ class Yolo(nn.Module):
         self.yolov2_conv4 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False))
         self.yolov2_conv5 = nn.Sequential(nn.Conv2d(512, 64, 1, 1, 0, bias=False))
         
-        #Concat
+        #Concat , last_conv2의 output은 내가 원하는대로 지정해줘도 되는가? 만약 내가 원하는 값이 x,y,w,h,c, distance , numOfClasses(20)이라면, out_channel은 len(anchors) * (6+numOfClasses)인가?  모델구조는 안건드리고 이부분만 건드리면 되는가?
         self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False))
         self.last_conv2= nn.Sequential(nn.Conv2d(1024,  len(self.anchors) * (5 + num_classes), 1, 1, 0, bias=False))
         
+    def forward(self,input):
