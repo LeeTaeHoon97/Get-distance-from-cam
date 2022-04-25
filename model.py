@@ -12,42 +12,42 @@ class Yolo(nn.Module):
         self.anchors=anchors
 
         #darknet 19 - 원본의 네트워크에선  활성함수를 사용하지 않음. 사용하는게 데이터 역전파 시 손실율이 줄어들거 같은데 왜 안썼을까?
-        self.darknet_conv1 = nn.Sequential(nn.Conv2d(3, 32, 3, 1, 1, bias=False), nn.MaxPool2d(2, 2))
-        self.darknet_conv2 = nn.Sequential(nn.Conv2d(32, 64, 3, 1, 1, bias=False),nn.MaxPool2d(2, 2))
+        self.darknet_conv1 = nn.Sequential(nn.Conv2d(3, 32, 3, 1, 1, bias=False),nn.BatchNorm2d(32), nn.MaxPool2d(2, 2))
+        self.darknet_conv2 = nn.Sequential(nn.Conv2d(32, 64, 3, 1, 1, bias=False),nn.BatchNorm2d(64),nn.MaxPool2d(2, 2))
 
-        self.darknet_conv3 = nn.Sequential(nn.Conv2d(64, 128, 3, 1, 1, bias=False))
-        self.darknet_conv4 = nn.Sequential(nn.Conv2d(128, 64, 1, 1, 0, bias=False))
-        self.darknet_conv5 = nn.Sequential(nn.Conv2d(64, 128, 3, 1, 1, bias=False), nn.MaxPool2d(2, 2))
+        self.darknet_conv3 = nn.Sequential(nn.Conv2d(64, 128, 3, 1, 1, bias=False),nn.BatchNorm2d(128))
+        self.darknet_conv4 = nn.Sequential(nn.Conv2d(128, 64, 1, 1, 0, bias=False),nn.BatchNorm2d(64))
+        self.darknet_conv5 = nn.Sequential(nn.Conv2d(64, 128, 3, 1, 1, bias=False),nn.BatchNorm2d(128), nn.MaxPool2d(2, 2))
 
-        self.darknet_conv6 = nn.Sequential(nn.Conv2d(128, 256, 3, 1, 1, bias=False))
-        self.darknet_conv7 = nn.Sequential(nn.Conv2d(256, 128, 1, 1, 0, bias=False))
-        self.darknet_conv8 = nn.Sequential(nn.Conv2d(128, 256, 3, 1, 1, bias=False), nn.MaxPool2d(2, 2))
+        self.darknet_conv6 = nn.Sequential(nn.Conv2d(128, 256, 3, 1, 1, bias=False),nn.BatchNorm2d(256))
+        self.darknet_conv7 = nn.Sequential(nn.Conv2d(256, 128, 1, 1, 0, bias=False),nn.BatchNorm2d(128))
+        self.darknet_conv8 = nn.Sequential(nn.Conv2d(128, 256, 3, 1, 1, bias=False),nn.BatchNorm2d(256), nn.MaxPool2d(2, 2))
         
-        self.darknet_conv9 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))
-        self.darknet_conv10 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False))
-        self.darknet_conv11 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))
-        self.darknet_conv12 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False))
-        self.darknet_conv13 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False))   #이부분에서 shortcut으로도 전달
+        self.darknet_conv9 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.darknet_conv10 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False),nn.BatchNorm2d(256))
+        self.darknet_conv11 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.darknet_conv12 = nn.Sequential(nn.Conv2d(512, 256, 1, 1, 0, bias=False),nn.BatchNorm2d(256))
+        self.darknet_conv13 = nn.Sequential(nn.Conv2d(256, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))   #이부분에서 shortcut으로도 전달
         self.darknet_maxpool13_2 = nn.Sequential(nn.MaxPool2d(2, 2))
         
-        self.darknet_conv14 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False))
-        self.darknet_conv15 = nn.Sequential(nn.Conv2d(1024, 512, 1, 1, 0, bias=False))
-        self.darknet_conv16 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False))
-        self.darknet_conv17 = nn.Sequential(nn.Conv2d(1024, 512, 1, 1, 0, bias=False))
-        self.darknet_conv18 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False))
+        self.darknet_conv14 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
+        self.darknet_conv15 = nn.Sequential(nn.Conv2d(1024, 512, 1, 1, 0, bias=False),nn.BatchNorm2d(512))
+        self.darknet_conv16 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
+        self.darknet_conv17 = nn.Sequential(nn.Conv2d(1024, 512, 1, 1, 0, bias=False),nn.BatchNorm2d(512))
+        self.darknet_conv18 = nn.Sequential(nn.Conv2d(512, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
         
-        self.darknet_conv19 = nn.Sequential(nn.Conv2d(1024, 1024, 3, 1, 1, bias=False))
-        self.darknet_conv20 = nn.Sequential(nn.Conv2d(1024, 1024, 3, 1, 1, bias=False))
+        self.darknet_conv19 = nn.Sequential(nn.Conv2d(1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
+        self.darknet_conv20 = nn.Sequential(nn.Conv2d(1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
         
         #Yolo v2
-        self.yolov2_conv1 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False))
-        self.yolov2_conv2 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False))
-        self.yolov2_conv3 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False))
-        self.yolov2_conv4 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False))
-        self.yolov2_conv5 = nn.Sequential(nn.Conv2d(512, 64, 1, 1, 0, bias=False))
+        self.yolov2_conv1 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.yolov2_conv2 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.yolov2_conv3 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.yolov2_conv4 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
+        self.yolov2_conv5 = nn.Sequential(nn.Conv2d(512, 64, 1, 1, 0, bias=False),nn.BatchNorm2d(64))
         
         #Concat , last_conv2의 output은 내가 원하는대로 지정해줘도 되는가? 만약 내가 원하는 값이 x,y,w,h,c, distance , numOfClasses(20)이라면, out_channel은 len(anchors) * (6+numOfClasses)인가?  모델구조는 안건드리고 이부분만 건드리면 되는가?
-        self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False))
+        self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
         self.last_conv2= nn.Sequential(nn.Conv2d(1024,  len(self.anchors) * (5 + num_classes), 1, 1, 0, bias=False))
         
     def forward(self,input):
