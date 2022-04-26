@@ -1,3 +1,4 @@
+from msilib.schema import Shortcut
 import torch
 import torch.nn as nn
 
@@ -51,3 +52,47 @@ class Yolo(nn.Module):
         self.last_conv2= nn.Sequential(nn.Conv2d(1024,  len(self.anchors) * (5 + num_classes), 1, 1, 0, bias=False))
         
     def forward(self,input):
+        #darknet19
+        output1=self.darknet_conv1(input)
+        output1=self.darknet_conv2(output1)
+        output1=self.darknet_conv3(output1)
+        output1=self.darknet_conv4(output1)
+        output1=self.darknet_conv5(output1)
+        output1=self.darknet_conv6(output1)
+        output1=self.darknet_conv7(output1)
+        output1=self.darknet_conv8(output1)
+        output1=self.darknet_conv9(output1)
+        output1=self.darknet_conv10(output1)
+        output1=self.darknet_conv11(output1)
+        output1=self.darknet_conv12(output1)
+        output1=self.darknet_conv13(output1)
+
+        shortcut=output1
+        
+        output1=self.darknet_maxpool13_2(output1)
+        output1=self.darknet_conv14(output1)
+        output1=self.darknet_conv15(output1)
+        output1=self.darknet_conv16(output1)
+        output1=self.darknet_conv17(output1)
+        output1=self.darknet_conv18(output1)
+        output1=self.darknet_conv19(output1)
+        output1=self.darknet_conv20(output1)
+
+        #yolo v2
+        output2=self.yolov2_conv1(shortcut)
+        output2=self.yolov2_conv2(output2)
+        output2=self.yolov2_conv3(output2)
+        output2=self.yolov2_conv4(output2)
+        output2=self.yolov2_conv5(output2)      #output2.data.size()= batch, (ch)64 x (h)26 x (w)26
+
+        #batch정보는 train시 사용될 batch size, 지금 정해줄때 batch도 정해줘야 학습때 문제 없음
+        batch,ch,h,w=output2.data.size()
+        output2=output2.view(batch,ch,h//2,2,w//2,2).contiguous()   #shape = batch 64 13 2 13 2 
+        output2=output2.permute(0,1,3,5,2,4).contiguous()           #shape = batch 64 2 2 13 13
+        output2=output2.view(batch,-1,h//2,w//2)                    #shape = batch 256 13 13
+        
+        output=torch.cat((output1,output2),1)
+        output=self.last_conv1(output)
+        output=self.last_conv2(output)
+
+        return output
