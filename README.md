@@ -6,6 +6,7 @@ Get distance by using opencv for my study
 (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
 (번역:https://csm-kr.tistory.com/3)
 yolov2직접구현
+(참고:https://herbwood.tistory.com/14)
 
 
 해야할일) yolo를 이용해 예제 학습해보기(바운딩박스 관련)
