@@ -47,8 +47,9 @@ class Yolo(nn.Module):
         self.yolov2_conv4 = nn.Sequential(nn.Conv2d(512, 512, 3, 1, 1, bias=False),nn.BatchNorm2d(512))
         self.yolov2_conv5 = nn.Sequential(nn.Conv2d(512, 64, 1, 1, 0, bias=False),nn.BatchNorm2d(64))
         
-        #Concat , last_conv2의 output은 내가 원하는대로 지정해줘도 되는가? 
-        #만약 내가 원하는 값이 x,y,w,h,c, distance , numOfClasses(20)이라면, out_channel은 len(anchors) * (6+numOfClasses)인가? 
+        #Concat 
+
+        # output = [numOfClasses(20),c(confidence score),x,y,w,h,distance], out_channel: len(anchors) * (6+numOfClasses)  <- dataset 클래스 종류에 따라 바뀔 수 있음
         self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024))
         self.last_conv2= nn.Sequential(nn.Conv2d(1024,  len(self.anchors) * (6 + num_classes), 1, 1, 0, bias=False))
         
@@ -95,5 +96,5 @@ class Yolo(nn.Module):
         output=torch.cat((output1,output2),1)
         output=self.last_conv1(output)
         output=self.last_conv2(output)                              #shape = (20+6)*5 13 13
-
+                                                                    #pred per grid cell = [class],  [box c score][box] ... ,[box5 c score], [box5] , [distance] 
         return output
