@@ -73,10 +73,10 @@ class Yolo(nn.Module):
         
         #Concat 
 
-        # output = [numOfClasses(20),c(confidence score),x,y,w,h,distance], out_channel: len(anchors) * (6+numOfClasses)  <- dataset 클래스 종류에 따라 바뀔 수 있음
+        # output = {numOfClasses(20),[c(confidence score),x,y,w,h]*numOfAnchors],distance}, out_channel:(len(anchors) * 5)+numOfClasses+1 =5*5+20+1 = 46 <- dataset 클래스 종류에 따라 바뀔 수 있음
         self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024),
                                         nn.LeakyReLU(0.1, inplace=True))
-        self.last_conv2= nn.Sequential(nn.Conv2d(1024,  len(self.anchors) * (6 + num_classes), 1, 1, 0, bias=False))
+        self.last_conv2= nn.Sequential(nn.Conv2d(1024,  (len(self.anchors) * 5) + num_classes+1, 1, 1, 0, bias=False))
         
     def forward(self,input):
         #darknet19
@@ -120,6 +120,6 @@ class Yolo(nn.Module):
         
         output=torch.cat((output1,output2),1)
         output=self.last_conv1(output)
-        output=self.last_conv2(output)                              #shape = (20+6)*5 13 13
-                                                                    #pred per grid cell = [class],  [box c score][box] ... ,[box5 c score], [box5] , [distance] 
+        output=self.last_conv2(output)                              #shape = 20+(5*5)+1, 13, 13
+                                                                    #pred per grid cell = [class],  [box c score][box] ... ,[box5 c score], [box5] , [distance] =46
         return output
