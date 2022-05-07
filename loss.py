@@ -14,7 +14,13 @@ class YoloLoss(nn.Module):
         self.lambda_zcoord=0.3        #단안카메라 거리측정에 쓰일 loss balance parm
     
     def forward(self,pred,target):
-        pass
+        #pred per grid cell = [class],  [box c score][box(x,y,w,h)] ... ,[box5 c score], [box5] , [distance]  = 20+5*5+1=46
+        #5개의 앵커박스에서 iou각각 산출 한 뒤 최대값을 찾아냄.
+        iou_b1 = self.iou(pred[..., 21:25],target[...,21:25])
+        iou_b2 = self.iou(pred[..., 26:30],target[...,26:30])
+        iou_b3 = self.iou(pred[..., 31:35],target[...,31:35])
+        iou_b4 = self.iou(pred[..., 36:40],target[...,36:40])
+        iou_b5 = self.iou(pred[..., 41:45],target[...,41:45])
 
 
 
