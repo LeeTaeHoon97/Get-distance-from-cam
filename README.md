@@ -19,10 +19,10 @@ loss func 직접구현 해보기
 
 
 ## ref)
-### (논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
+### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
 ### (번역:https://csm-kr.tistory.com/3)
 ### yolov1 torch 구현
-### (참고:https://herbwood.tistory.com/14)
+### https://herbwood.tistory.com/14
 ### yolov1 tf구현
 ### https://velog.io/@minkyu4506/YOLO-v1-%EB%A6%AC%EB%B7%B0-%EC%BD%94%EB%93%9C-%EA%B5%AC%ED%98%84tensorflow2
