@@ -5,6 +5,7 @@ import torch
 class YoloLoss(nn.Module):
     def __init__(self ,S=13,B=5,C=8):
         super(YoloLoss,self).__init__() #호환을 위해 python 2.0방식으로 선언
+        self.sse=nn.MSELoss(reduction="sum")
         self.S=S
         self.B=B
         self.C=C
