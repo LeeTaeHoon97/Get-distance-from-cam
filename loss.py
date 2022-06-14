@@ -19,6 +19,12 @@ class YoloLoss(nn.Module):
         #target  =객체가 하나뿐인 이미지 한장의 경우 13개의 그리드 셀로 분류된뒤 13*13*14 의 형태를 가짐 [class],[Pc = confidence score],[x], [y], [w], [h],[distance]   =   8+6=14 (class 는 one hot encoding)  
         #이미지 크기는 448 * 448 로 시작해 앵커박스 도입을 위해 416 * 416으로 변경
         #5개의 앵커박스에서 iou각각 산출 한 뒤 최대값을 찾아냄.
+
+        pred = pred.reshape(-1,self.S,self.S,self.C+self.B*5+1)         #pred는 모델이 산출하여나온 값이 flatten 되어있는 상태, 이를 13x13x34의 형태 reshape
+
+
+        #0~7 = classes, 8=box1 c score , 9~12=pos , 13 = box2 c score ...... 28 = box 5 c score, 29~32 = box5 pos, 33= dist 
+
         iou_b1 = self.iou(pred[..., 9:13],target[...,9:13])                         #target은 gt bbox로 5개의 앵커박스가 존재하는게 아닌 하나의 bbox를 가짐.
         iou_b2 = self.iou(pred[..., 14:18],target[...,9:13])                        #target idx 0~7 = class, 8=Pc, 9~12 = pos , 13 = distance
         iou_b3 = self.iou(pred[..., 19:23],target[...,9:13])
@@ -29,11 +35,13 @@ class YoloLoss(nn.Module):
 
         iou_maxes, bestbox=torch.max(ious,dim=0)
 
-        exists_box=target[...,8].unsqueeze(3)   #사진을 grid나누고 분해하여 레이블을 저장할테니, 객체가 있는 부분 과 아닌부분으로 분리됨
+        exists_box=target[...,8].unsqueeze(3)   #Iobj_i, idx(8)은 box c score이다. 즉 0이면 존재하지 않고 1이면 존재한다.
+                                                # reshape에서 -1,S,S,output 형태로 나눠진 상태인데, 이 중 box c score만 가져오기 위해 unsqueeze(3)을 사용  
                                                
                                                 
                                             
         
+        #Localization Loss
         box_pred = exists_box*(
             (
                 bestbox * pred[...,9:13]
