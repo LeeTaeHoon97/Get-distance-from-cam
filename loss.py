@@ -33,7 +33,7 @@ class YoloLoss(nn.Module):
         
         ious= torch.cat([iou_b1.unsqueeze(0),iou_b2.unsqueeze(0),iou_b3.unsqueeze(0),iou_b4.unsqueeze(0),iou_b5.unsqueeze(0)],dim=0)
 
-        iou_maxes, bestbox=torch.max(ious,dim=0)
+        iou_maxes, bestbox=torch.max(ious,dim=0)        #bestbox에는 iou값이 가장 큰 bounding box의 index가 저장
 
         exists_box=target[...,8].unsqueeze(3)   #Iobj_i, idx(8)은 box c score이다. 즉 0이면 존재하지 않고 1이면 존재한다.
                                                 # reshape에서 -1,S,S,output 형태로 나눠진 상태인데, 이 중 box c score만 가져오기 위해 unsqueeze(3)을 사용  
@@ -42,14 +42,20 @@ class YoloLoss(nn.Module):
                                             
         
         #Localization Loss
-        box_pred = exists_box*(
-            (
-                bestbox * pred[...,9:13]
-                + (1-bestbox)*pred[]
-            )
-        )
+        x,y,w,h=target[...,9:13]
+        x_hat,y_hat,w_hat,h_hat=bestbox         #에러 발생 시bestbox의 형태가 어떤형태인지 확인할 필요가 있음
+        local_loss_part1=self.lambda_coord * exists_box * (torch.pow((x-x_hat),2)+torch.pow((y-y_hat),2))
+        local_loss_part2=self.lambda_coord * exists_box * (torch.pow((torch.sqrt(w)-torch.sqrt(w_hat)),2)+torch.pow((torch.sqrt(h)-torch.sqrt(h_hat)),2))
+        localization_loss = local_loss_part1+local_loss_part2
 
+        #Confidence Loss
 
+        #Classification Loss
+
+        #Dsitance Regression Loss
+        z=target[...,14]
+        z_hat=pred[...,33]
+        distance_regression_loss = self.lambda_zcoord * exists_box * torch.pow((z-z_hat),2)
 
     def iou(self,pred,target):          #kitti dataset은 midpoint 형식의 바운딩박스를 가짐.
                                         #shape = [x,y,w,h]
