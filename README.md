@@ -18,11 +18,15 @@ loss func 직접구현 해보기
 
 
 ## 어려웠던 점
-yolo라는 논문이 가진 그리드셀과 바운딩박스의 개념, IOU의 개념이 조금 어려웠다.
+### yolo라는 논문이 가진 그리드셀과 바운딩박스의 개념, IOU의 개념이 조금 어려웠다.
 
-yolo 논문의  loss function에서 사용된 기호 중 B와 S가 직접적으로 명시된 부분이 없어 어려웠다.
+### yolo 논문의  loss function에서 사용된 기호 중 B와 S가 직접적으로 명시된 부분이 없어 어려웠다.
 
+### loss function의 sigma(B) 와 sigma(S^2)의 수식은, 시그마를 사용하였으니 코드에 합하는 부분을 구현해줘야 하는데 관련 내용이 없어 어려웠다.
+해당 시그마가 의미하는것은 단순 합계가 아닌 객체가 존재하는 그리드셀의 값이였다.
 
+"즉, localization loss, confidence loss는 해당 셀에 실제 객체의 중점이 있을 때 해당 셀에서 출력한 bounding box 중 Ground Truth Box와 IoU가 더높은 bounding box와 Ground Truth Box와의 loss를 계산한 것들입니다.
+그리고 classification loss는 해당 셀에 실제 객체의 중점이 있을 때 해당 셀에서 얻은 class score와 label data 사이의 loss를 나타낸 값이죠."
 
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
