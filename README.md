@@ -28,6 +28,8 @@ loss func 직접구현 해보기
 "즉, localization loss, confidence loss는 해당 셀에 실제 객체의 중점이 있을 때 해당 셀에서 출력한 bounding box 중 Ground Truth Box와 IoU가 더높은 bounding box와 Ground Truth Box와의 loss를 계산한 것들입니다.
 그리고 classification loss는 해당 셀에 실제 객체의 중점이 있을 때 해당 셀에서 얻은 class score와 label data 사이의 loss를 나타낸 값이죠."
 
+### confidence loss 구현 부분에서 bestbox(responsible)와 나머지 박스들의 c score도 알아야 되는데 max를 통하여 최대값을 찾다보니 모든 박스들의 score값을 알수 없었다.
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
