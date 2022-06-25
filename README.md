@@ -30,6 +30,14 @@ loss func 직접구현 해보기
 
 ### confidence loss 구현 부분에서 bestbox(responsible)와 나머지 박스들의 c score도 알아야 되는데 max를 통하여 최대값을 찾다보니 모든 박스들의 score값을 알수 없었다.
 
+리스트를 통해 한번에 알아볼수있게 정리하였다.
+
+### Iobj_i (exist)와 Iobj_ij(reponsible)의 차이를 명확히 알지 못하였다.
+
+Iobj_i (exist)는 해당 셀 내에서 객체가 실제로 존재하는지(classification loss에 사용) , 존재시 1, 아닐경우 0
+
+Iobj_ij(reponsible) 최대 iou값인 anchor box를 의미, 해당 box시 1, 아닐경우 0
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
