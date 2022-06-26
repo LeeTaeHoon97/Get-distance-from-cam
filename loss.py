@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import torch.nn as nn
 import torch
 #본 모델은 13x13의 그리드셀과 5개의 앵커박스, 8개의 클래스로 이루어짐
@@ -33,22 +34,39 @@ class YoloLoss(nn.Module):
         
         ious= torch.cat([iou_b1.unsqueeze(0),iou_b2.unsqueeze(0),iou_b3.unsqueeze(0),iou_b4.unsqueeze(0),iou_b5.unsqueeze(0)],dim=0)
 
-        iou_maxes, bestbox=torch.max(ious,dim=0)        #bestbox에는 iou값이 가장 큰 bounding box의 index가 저장
+        iou_maxes, box_index=torch.max(ious,dim=0)        #bestbox에는 iou값이 가장 큰 bounding box의 index가 저장, iobj(ij) 를 말함.
 
         exists_box=target[...,8].unsqueeze(3)   #Iobj_i, idx(8)은 box c score이다. 즉 0이면 존재하지 않고 1이면 존재한다.
                                                 # reshape에서 -1,S,S,output 형태로 나눠진 상태인데, 이 중 box c score만 가져오기 위해 unsqueeze(3)을 사용  
                                                
                                                 
-                                            
+        bestbox=[pred[..., 8:13],pred[..., 13:18],pred[..., 18:23],pred[..., 23:28],pred[..., 28:33]]        #bestbox는 index(0~4)까지의 박스 인덱스이므로 해당 인덱스에 상응하는 리스트 생성
+                                    #해당 박스의 각 elem에는 pred anchor의 c score, x,y,w,h가 들어가 있음.                                    
         
         #Localization Loss
+        # Iobj(ij) 를 명시하지 않은 이유 : iou max된 bestbox를 가져온다는 점에서, iobj값이 1이라는걸 시사하기 때문
         x,y,w,h=target[...,9:13]
-        x_hat,y_hat,w_hat,h_hat=bestbox         #에러 발생 시bestbox의 형태가 어떤형태인지 확인할 필요가 있음
-        local_loss_part1=self.lambda_coord * exists_box * (torch.pow((x-x_hat),2)+torch.pow((y-y_hat),2))
-        local_loss_part2=self.lambda_coord * exists_box * (torch.pow((torch.sqrt(w)-torch.sqrt(w_hat)),2)+torch.pow((torch.sqrt(h)-torch.sqrt(h_hat)),2))
+        _, x_hat,y_hat,w_hat,h_hat=bestbox[box_index]         #에러 발생 시bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감.
+        local_loss_part1=self.lambda_coord * (torch.pow((x-x_hat),2)+torch.pow((y-y_hat),2))
+        local_loss_part2=self.lambda_coord * (torch.pow((torch.sqrt(w)-torch.sqrt(w_hat)),2)+torch.pow((torch.sqrt(h)-torch.sqrt(h_hat)),2))
         localization_loss = local_loss_part1+local_loss_part2
 
         #Confidence Loss
+        c=target[...,8]
+        
+        conf_loss=0
+        no_conf_loss=0
+
+        # Iobj(ij) and Inoobj(ij)를 명시하지 않은 이유: 존재하든 존재하지 않든 모든경우를 다 계산하기 때문
+        for i in range(len(bestbox)):  
+            if i == box_index:  #최대 iou를 가진 anchor box일 경우.
+                c_hat=bestbox[i][0]
+                conf_loss+=torch.pow((c-c_hat),2)
+            else:
+                c_hat=bestbox[i][0]
+                no_conf_loss+=torch.pow((c-c_hat),2)
+
+        confidence_loss=conf_loss + (self.lambda_noobj * no_conf_loss)
 
         #Classification Loss
 
