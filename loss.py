@@ -44,7 +44,7 @@ class YoloLoss(nn.Module):
                                     #해당 박스의 각 elem에는 pred anchor의 c score, x,y,w,h가 들어가 있음.                                    
         
         #Localization Loss
-        # Iobj(ij) 를 명시하지 않은 이유 : iou max된 bestbox를 가져온다는 점에서, iobj값이 1이라는걸 시사하기 때문
+        #Iobj_ij를 명시하지 않은 이유 : iou max된 bestbox를 가져온다는 점에서, iobj값이 1이라는걸 시사하기 때문
         x,y,w,h=target[...,9:13]
         _, x_hat,y_hat,w_hat,h_hat=bestbox[box_index]         #에러 발생 시bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감.
         local_loss_part1=self.lambda_coord * (torch.pow((x-x_hat),2)+torch.pow((y-y_hat),2))
@@ -59,7 +59,7 @@ class YoloLoss(nn.Module):
 
         # Iobj(ij) and Inoobj(ij)를 명시하지 않은 이유: 존재하든 존재하지 않든 모든경우를 다 계산하기 때문
         for i in range(len(bestbox)):  
-            if i == box_index:  #최대 iou를 가진 anchor box일 경우.
+            if i == box_index:  #최대 iou를 가진 anchor box일 경우. ,즉 responsible 또는 Iobj_ij
                 c_hat=bestbox[i][0]
                 conf_loss+=torch.pow((c-c_hat),2)
             else:
@@ -69,6 +69,11 @@ class YoloLoss(nn.Module):
         confidence_loss=conf_loss + (self.lambda_noobj * no_conf_loss)
 
         #Classification Loss
+        p=target[...,:8]
+        p_hat=pred[...,:8]
+        
+        classification_loss=exists_box * torch.pow((p-p_hat),2)
+
 
         #Dsitance Regression Loss
         z=target[...,14]
