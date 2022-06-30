@@ -15,6 +15,8 @@ loss func 직접구현 해보기
 이후 testset 7517
 
 
+## Loss
+![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
 
 ## 어려웠던 점
