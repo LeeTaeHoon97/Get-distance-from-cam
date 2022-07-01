@@ -80,6 +80,11 @@ class YoloLoss(nn.Module):
         z_hat=pred[...,33]
         distance_regression_loss = self.lambda_zcoord * exists_box * torch.pow((z-z_hat),2)
 
+
+        loss = localization_loss + confidence_loss + classification_loss + distance_regression_loss
+
+        return loss
+
     def iou(self,pred,target):          #kitti dataset은 midpoint 형식의 바운딩박스를 가짐.
                                         #shape = [x,y,w,h]
         pred_box_x1=pred[0:1]-pred[2:3]/2
