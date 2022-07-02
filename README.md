@@ -18,6 +18,12 @@ loss func 직접구현 해보기
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
+### disctance loss
+
+
+
+
+
 
 ## 어려웠던 점
 ### yolo라는 논문이 가진 그리드셀과 바운딩박스의 개념, IOU의 개념이 조금 어려웠다.
