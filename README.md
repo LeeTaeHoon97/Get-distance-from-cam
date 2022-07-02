@@ -19,6 +19,7 @@ loss func 직접구현 해보기
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
 ### disctance loss
+![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/177005887-698535f8-45bf-498b-8ff8-a03a9522b2f5.png)
 
 
 
