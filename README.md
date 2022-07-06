@@ -23,7 +23,7 @@ loss func 직접구현 해보기
 
 ![CodeCogsEqn (2)](https://user-images.githubusercontent.com/59239082/177166770-9c536857-bfbe-42f2-a488-e11042404f63.png)
 
-
+![CodeCogsEqn (3)](https://user-images.githubusercontent.com/59239082/177166821-0dcfb663-0ce1-4b3f-8a97-a2cdb55c67ee.png)
 
 
 
