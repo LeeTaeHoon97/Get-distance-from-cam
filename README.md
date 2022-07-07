@@ -25,6 +25,9 @@ loss func 직접구현 해보기
 
 ![CodeCogsEqn (3)](https://user-images.githubusercontent.com/59239082/177166821-0dcfb663-0ce1-4b3f-8a97-a2cdb55c67ee.png)
 
+![CodeCogsEqn (4)](https://user-images.githubusercontent.com/59239082/177793899-e5eef728-71ed-45f9-8bbf-6c0f68f1cee3.png)
+
+
 
 
 
