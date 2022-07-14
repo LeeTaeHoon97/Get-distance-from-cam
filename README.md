@@ -55,6 +55,8 @@ Iobj_i (exist)는 해당 셀 내에서 객체가 실제로 존재하는지(class
 
 Iobj_ij(reponsible) 최대 iou값인 anchor box를 의미, 해당 box시 1, 아닐경우 0
 
+### Kitti dataset을 이용한 custom dataset구축에 어려웠다.
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
