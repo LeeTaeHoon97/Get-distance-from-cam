@@ -10,7 +10,7 @@ Get distance by using opencv, yolo_v2 for my study
 3. Loss fucntion 부분 시그마의 S와 B는 각각 셀의 개수와 바운딩 박스의 개수이다.
 
 해야할일) yolo를 이용해 예제 학습해보기(바운딩박스 관련)
-loss func 직접구현 해보기
+kitti데이터셋을 yolo형식으로 변환
 데이터 분리 trainset 7480 -> trainset 6000 , validset 1480
 이후 testset 7517
 
