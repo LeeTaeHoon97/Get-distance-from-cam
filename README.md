@@ -11,6 +11,7 @@ Get distance by using opencv, yolo_v2 for my study
 
 해야할일) yolo를 이용해 예제 학습해보기(바운딩박스 관련)
 kitti데이터셋을 yolo형식으로 변환
+
 데이터 분리 trainset 7480 -> trainset 6000 , validset 1480
 이후 testset 7517
 
