@@ -10,7 +10,8 @@ Get distance by using opencv, yolo_v2 for my study
 3. Loss fucntion 부분 시그마의 S와 B는 각각 셀의 개수와 바운딩 박스의 개수이다.
 
 해야할일) yolo를 이용해 예제 학습해보기(바운딩박스 관련)
-loss func 직접구현 해보기
+kitti데이터셋을 yolo형식으로 변환
+
 데이터 분리 trainset 7480 -> trainset 6000 , validset 1480
 이후 testset 7517
 
@@ -18,7 +19,7 @@ loss func 직접구현 해보기
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
-### disctance loss
+## disctance loss
 ![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/177005887-698535f8-45bf-498b-8ff8-a03a9522b2f5.png)
 
 ![CodeCogsEqn (2)](https://user-images.githubusercontent.com/59239082/177166770-9c536857-bfbe-42f2-a488-e11042404f63.png)
@@ -54,6 +55,8 @@ loss func 직접구현 해보기
 Iobj_i (exist)는 해당 셀 내에서 객체가 실제로 존재하는지(classification loss에 사용) , 존재시 1, 아닐경우 0
 
 Iobj_ij(reponsible) 최대 iou값인 anchor box를 의미, 해당 box시 1, 아닐경우 0
+
+### Kitti dataset을 이용한 custom dataset구축에 어려웠다.
 
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
