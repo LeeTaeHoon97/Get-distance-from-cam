@@ -20,6 +20,7 @@ class YoloLoss(nn.Module):
         #target  =객체가 하나뿐인 이미지 한장의 경우 13개의 그리드 셀로 분류된뒤 13*13*14 의 형태를 가짐 [class],[Pc = confidence score],[x], [y], [w], [h],[distance]   =   8+6=14 (class 는 one hot encoding)  
         #이미지 크기는 448 * 448 로 시작해 앵커박스 도입을 위해 416 * 416으로 변경
         #5개의 앵커박스에서 iou각각 산출 한 뒤 최대값을 찾아냄.
+        #target[20]에는 c score가 들어가야하기때문에 이후 커스텀데이터를 다루면서 추가해준다.
 
         pred = pred.reshape(-1,self.S,self.S,self.C+self.B*5+1)         #pred는 모델이 산출하여나온 값이 flatten 되어있는 상태, 이를 13x13x34의 형태 reshape
 
