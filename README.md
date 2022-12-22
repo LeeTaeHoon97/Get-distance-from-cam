@@ -16,11 +16,13 @@ kitti데이터셋을 yolo형식으로 변환
 이후 testset 7517
 
 
+
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
 ## disctance loss
-![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/177005887-698535f8-45bf-498b-8ff8-a03a9522b2f5.png)
+
+![CodeCogsEqn](https://user-images.githubusercontent.com/59239082/209095206-16974f62-44eb-4467-b8b7-756c54750775.png)
 
 ![CodeCogsEqn (2)](https://user-images.githubusercontent.com/59239082/177166770-9c536857-bfbe-42f2-a488-e11042404f63.png)
 
@@ -28,8 +30,7 @@ kitti데이터셋을 yolo형식으로 변환
 
 ![CodeCogsEqn (4)](https://user-images.githubusercontent.com/59239082/177793899-e5eef728-71ed-45f9-8bbf-6c0f68f1cee3.png)
 
-![CodeCogsEqn (5)](https://user-images.githubusercontent.com/59239082/177794059-87be04db-5e6a-49b3-8d10-1c651a01367e.png)
-
+![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/209095271-ef03ce84-b937-47f2-8602-5f6e2b6644f8.png)
 
 
 
