@@ -73,7 +73,7 @@ class Yolo(nn.Module):
         
         #Concat 
 
-        # output = {numOfClasses(8),[c(confidence score),x,y,w,h]*numOfAnchors],distance}, out_channel:(len(anchors) * 5)+numOfClasses+1 =5*5+8+1 = 34 <- dataset 클래스 종류에 따라 바뀔 수 있음
+        # output = {numOfClasses(8),[c(confidence score),x,y,w,h]*numOfAnchors],distance}, out_channel:(len(anchors) * 5)+numOfClasses+1 =5*5+8+1 = 34 즉, 13x13x34 <- dataset 클래스 종류에 따라 바뀔 수 있음
         self.last_conv1= nn.Sequential(nn.Conv2d(256+1024, 1024, 3, 1, 1, bias=False),nn.BatchNorm2d(1024),
                                         nn.LeakyReLU(0.1, inplace=True))
         self.last_conv2= nn.Sequential(nn.Conv2d(1024,  (len(self.anchors) * 5) + self.num_classes+1, 1, 1, 0, bias=False))
