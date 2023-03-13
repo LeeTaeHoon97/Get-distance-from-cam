@@ -46,7 +46,7 @@ class YoloLoss(nn.Module):
                                     #해당 박스의 각 elem에는 pred anchor의 c score, x,y,w,h가 들어가 있음.                                    
         
         #Localization Loss
-        #Iobj_ij를 명시하지 않은 이유 : iou max된 bestbox를 가져온다는 점에서, iobj값이 1이라는걸 시사하기 때문
+        #Iobj_ij를 명시하지 않은 이유 : bestbox[box_index]를 가져온다는 점에서,box_index의 iobj값이 1이라는걸 시사하기 때문
         x,y,w,h=target[...,9:13]
         _, x_hat,y_hat,w_hat,h_hat=bestbox[box_index]         #에러 발생 시 bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감.
         local_loss_part1=self.lambda_coord * (torch.pow((x-x_hat),2)+torch.pow((y-y_hat),2))
