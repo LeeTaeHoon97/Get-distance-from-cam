@@ -122,4 +122,5 @@ class Yolo(nn.Module):
         output=self.last_conv1(output)
         output=self.last_conv2(output)                              #shape = 8+(5*5)+1, 13, 13
                                                                     #pred per grid cell = [class],  [box c score][box] ... ,[box5 c score], [box5] , [distance] =34
+    
         return output

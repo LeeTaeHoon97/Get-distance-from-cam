@@ -65,6 +65,8 @@ yolo의 label format에 cscore는 들어가지 않음.
 
 target의 형식 변경
 
+
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
