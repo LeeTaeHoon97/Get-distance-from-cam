@@ -67,6 +67,15 @@ target의 형식 변경
 
 
 
+### 결론
+
+학습시 nan값이 나오는 현상,
+loss의 w와 h의 sqrt과정중 data가 소실되기 때문,
+실제로 sqrt를 제거할시 다른 양상을보임. 그러나 얼마못가 nan이 출력.
+yolo v2의 데이터는 416x416의 이미지 포맷을 갖는데,
+kitti dataset의 데이터가 그에 비해 크고 resize과정에서 데이터가 줄어들어 문제가 발생.
+VOC 데이터셋을 사용.
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
