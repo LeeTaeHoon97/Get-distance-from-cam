@@ -62,9 +62,9 @@ class YoloLoss(nn.Module):
 
         local_loss_part1= self.mse(x_hat,x)+self.mse(y_hat,y)
         
-        local_loss_part2= self.mse(w_hat,w)+self.mse(h_hat,h)               #no sqrt
+        # local_loss_part2= self.mse(w_hat,w)+self.mse(h_hat,h)               #no sqrt
 
-        # local_loss_part2= self.mse(torch.sqrt(w_hat),torch.sqrt(w))+self.mse(torch.sqrt(h_hat),torch.sqrt(h))
+        local_loss_part2= self.mse(torch.sqrt(w_hat),torch.sqrt(w))+self.mse(torch.sqrt(h_hat),torch.sqrt(h))
         
         local_loss_part2=torch.where(torch.isnan(local_loss_part2), torch.zeros_like(local_loss_part2), local_loss_part2)              #convert nan to 0
 
@@ -108,7 +108,7 @@ class YoloLoss(nn.Module):
     
 
         # print("self.lambda_zcoord shape",self.lambda_zcoord.shape)
-        distance_regression_loss =  (exists_box * (torch.pow((z-z_hat),2)).sum())
+        distance_regression_loss =  (exists_box * (torch.pow((z-z_hat),2).sum()))
 
 
         distance_regression_loss=self.lambda_zcoord *distance_regression_loss
