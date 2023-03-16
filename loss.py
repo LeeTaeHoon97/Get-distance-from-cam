@@ -7,6 +7,7 @@ class YoloLoss(nn.Module):
     def __init__(self ,S=13,B=5,C=8):
         super(YoloLoss,self).__init__() #호환을 위해 python 2.0
         self.mse=nn.MSELoss(reduction="sum")
+        self.ce=nn.CrossEntropyLoss(reduction='sum')
         self.S=S
         self.B=B
         self.C=C
@@ -18,11 +19,11 @@ class YoloLoss(nn.Module):
     
     def forward(self, pred, target):
         #pred per grid cell = [class],  [box c score][box(x,y,w,h)] ... ,[box5 c score], [box5] , [distance]  = 8+5*5+1=34
-        #target  =객체가 하나뿐인 이미지 한장의 경우 13개의 그리드 셀로 분류된뒤 13*13*14 의 형태를 가짐 [class],[Pc = confidence score],[x], [y], [w], [h],[distance]   =   8+6=14 (class 는 one hot encoding)  
+        #target  =객체가 하나뿐인 이미지 한장의 경우 13개의 그리드 셀로 분류된뒤 13*13*14 의 형태를 가짐 [class],[Pc = confidence score],[x], [y], [w], [h],[distance]   =   1+6=7 (class 는 one hot encoding)  
         #이미지 크기는 앵커박스 도입을 위해 416 * 416으로 변경
         #target에는 c score가 들어가야하기때문에 이미지를 13x13으로 grid cell을 나눈다. 이후 target의 중심 좌표가 속한 grid cell값에 1을 준다. 
         #5개의 앵커박스에서 iou각각 산출 한 뒤 최대값을 찾아냄.
-       
+        batch_size=pred.data.size(0)
         
         pred = pred.reshape(-1,self.S,self.S,self.C+self.B*5+1)         #pred는 모델이 산출하여나온 값이 flatten 되어있는 상태, 이를 13x13x34의 형태 reshape
         
@@ -58,23 +59,34 @@ class YoloLoss(nn.Module):
         x,y,w,h=target[...,9],target[...,10],target[...,11],target[...,12]
         _, x_hat,y_hat,w_hat,h_hat=bestbox[max_iou_idx][...,0],bestbox[max_iou_idx][...,1],bestbox[max_iou_idx][...,2],bestbox[max_iou_idx][...,3],bestbox[max_iou_idx][...,4]         #에러 발생 시 bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감.
         
+
+        localization_loss = exists_box * self.mse(torch.cat((x_hat, y_hat, w_hat, h_hat), dim=-1),
+                                          torch.cat((x, y, w, h), dim=-1))
+        localization_loss = self.lambda_coord * localization_loss
+
+
+        # localization_loss = exists_box * self.mse(torch.cat((x_hat, y_hat, torch.sqrt(w_hat), torch.sqrt(h_hat)), dim=-1),
+        #                                   torch.cat((x, y, torch.sqrt(w), torch.sqrt(h)), dim=-1))
+
+
+
+        # local_loss_part1= self.mse(x_hat,x)+self.mse(y_hat,y)
         
+        # # local_loss_part2= self.mse(w_hat,w)+self.mse(h_hat,h)               #no sqrt
 
-        local_loss_part1= self.mse(x_hat,x)+self.mse(y_hat,y)
+        # local_loss_part2= self.mse(torch.sqrt(w_hat),torch.sqrt(w))+self.mse(torch.sqrt(h_hat),torch.sqrt(h))
         
-        # local_loss_part2= self.mse(w_hat,w)+self.mse(h_hat,h)               #no sqrt
+        # local_loss_part2=torch.where(torch.isnan(local_loss_part2), torch.zeros_like(local_loss_part2), local_loss_part2)              #convert nan to 0
 
-        local_loss_part2= self.mse(torch.sqrt(w_hat),torch.sqrt(w))+self.mse(torch.sqrt(h_hat),torch.sqrt(h))
-        
-        local_loss_part2=torch.where(torch.isnan(local_loss_part2), torch.zeros_like(local_loss_part2), local_loss_part2)              #convert nan to 0
+        # localization_loss = local_loss_part1+local_loss_part2
 
-        localization_loss = local_loss_part1+local_loss_part2
-
-        localization_loss=self.lambda_coord*localization_loss
+        # localization_loss=self.lambda_coord*localization_loss
 
 
-        localization_loss=localization_loss*exists_box
-        localization_loss=localization_loss
+        # localization_loss=localization_loss*exists_box
+        # localization_loss=localization_loss
+
+
         #Confidence Loss
         c=target[...,8]
         
@@ -90,16 +102,23 @@ class YoloLoss(nn.Module):
                 c_hat=bestbox[i][...,0]
                 no_conf_loss+=torch.pow((c-c_hat),2)
 
-        confidence_loss=(conf_loss) + (self.lambda_noobj * (no_conf_loss))
+        confidence_loss=sum(conf_loss) + (self.lambda_noobj * sum(no_conf_loss))
 
         confidence_loss=confidence_loss.unsqueeze(-1)
 
 
         #Classification Loss
-        p=target[...,:8]
-        p_hat=pred[...,:8]
-        
-        classification_loss=(exists_box * (torch.pow((p-p_hat),2)).sum())
+        p=target[...,0:8]
+        p_hat=pred[...,0:8]
+
+        # p_hat = torch.reshape(p_hat, ( 13, 8))
+        # p = torch.reshape(p, ( 13, 8))
+
+        # print('p shape',p.shape)
+        # print('p shape',p_hat.shape)
+
+
+        classification_loss= exists_box * self.mse(p_hat,p)
 
 
         #Dsitance Regression Loss
@@ -108,7 +127,8 @@ class YoloLoss(nn.Module):
     
 
         # print("self.lambda_zcoord shape",self.lambda_zcoord.shape)
-        distance_regression_loss =  (exists_box * (torch.pow((z-z_hat),2).sum()))
+
+        distance_regression_loss =  (exists_box * self.mse(z_hat,z))
 
 
         distance_regression_loss=self.lambda_zcoord *distance_regression_loss
@@ -117,21 +137,21 @@ class YoloLoss(nn.Module):
 
 
         return loss
-
-    def iou(self,pred,target):          #kitti dataset은 midpoint 형식의 바운딩박스를 가짐.
+        # return loss ,localization_loss,confidence_loss,classification_loss,distance_regression_loss
+    def iou(self,pred,target):          #yolo dataset은 midpoint 형식의 바운딩박스를 가짐.
                                         #shape = [x,y,w,h]
 
-
-        pred_box_x1=pred[...,0:1]-pred[...,2:3]/2
-        pred_box_y1=pred[...,1:2]-pred[...,3:4]/2
-        pred_box_x2=pred[...,0:1]+pred[...,2:3]/2
-        pred_box_y2=pred[...,1:2]+pred[...,3:4]/2
+        #it means,  center x - (width/2) is x start
+        pred_box_x1=pred[...,0:1]-(pred[...,2:3]/2)
+        pred_box_y1=pred[...,1:2]-(pred[...,3:4]/2)
+        pred_box_x2=pred[...,0:1]+(pred[...,2:3]/2)
+        pred_box_y2=pred[...,1:2]+(pred[...,3:4]/2)
 
         
-        target_box_x1=target[...,0:1]-target[...,2:3]/2
-        target_box_y1=target[...,1:2]-target[...,3:4]/2
-        target_box_x2=target[...,0:1]+target[...,2:3]/2
-        target_box_y2=target[...,1:2]+target[...,3:4]/2
+        target_box_x1=target[...,0:1]-(target[...,2:3]/2)
+        target_box_y1=target[...,1:2]-(target[...,3:4]/2)
+        target_box_x2=target[...,0:1]+(target[...,2:3]/2)
+        target_box_y2=target[...,1:2]+(target[...,3:4]/2)
         
         #두 사각형의 겹치는 면적 좌표 구하기
         x1=torch.max(pred_box_x1,target_box_x1)
