@@ -74,6 +74,12 @@ target의 형식 변경
 학습시 노이즈를 포함한 loss 하향곡선을 보였다.
 정상적인 동작 확인
 
+추가적으로, 논문을 참고하여 구현하여 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져, 
+좋은 성능을 보이지 못하리라 생각됨.
+
+추가적으로. boackbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
+yolo v2 역시 제로베이스에서 학습하여 좋은 성능을 보이지 못함
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
@@ -82,3 +88,5 @@ target의 형식 변경
 ### https://herbwood.tistory.com/14
 ### yolov1 tf구현
 ### https://velog.io/@minkyu4506/YOLO-v1-%EB%A6%AC%EB%B7%B0-%EC%BD%94%EB%93%9C-%EA%B5%AC%ED%98%84tensorflow2
+### train tolov2 with kitti dataset
+### http://yizhouwang.net/blog/2018/07/29/train-yolov2-kitti/
