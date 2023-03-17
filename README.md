@@ -14,7 +14,7 @@ Get distance by using opencv, yolo_v2 for my study
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
 
-단, classification loss 는 Cross entropy loss
+
 
 ## disctance loss
 
