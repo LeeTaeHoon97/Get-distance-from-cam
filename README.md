@@ -67,11 +67,12 @@ yolo의 label format에 cscore는 들어가지 않음.
 
 target의 형식 변경
 
-### 결론
+## 결론
 
 로컬 환경, colab 환경 모두 ram 및 gpu 부족으로 인해 학습에 어려움이 있어,
 5 epoch만 학습하였지만,
 학습시 노이즈를 포함한 loss 하향곡선을 보였다.
+정상적인 동작 확인
 
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
