@@ -57,7 +57,10 @@ Iobj_ij(responsible) responsible bbox(최대 iou bbox)와 gt box를 비교할것
 
 ### max iou를 가진 pred bbox를 선택하는것이 어려웠다.
 
-max iou 자체는 torch.max를 이용하여 쉽게 찾을 수 있었지만, 이를 bboxes에 매칭하는것이 어려웠다.(shape is [batchsize, gridcell, gridcell, channel])
+max iou 자체는 torch.max를 이용하여 쉽게 찾을 수 있었지만, 이를 bboxes에 매칭하는것이 어려웠다.
+
+(shape is [batchsize, gridcell, gridcell, channel])
+
 unsqueeze를 이용하여 박스 idx 채널을 하나 추가하였고, torch.mode 를 이용하여 most frequency를 파악하여 best box를 선택하였다.
 
 ## 결론
