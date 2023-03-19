@@ -6,7 +6,7 @@ Get distance by using opencv, yolo_v2 for my study
 거리계산 처음엔 카메라 두대를 이용하여 유클리드 거리를 구하는 방식을 생각하였는데, 단안 카메라를 이용한 거리측정에 대한 논문을 발견하여 이를 활용해보기로 하였다.
 
 거리 정보가 포함된 Kitti dataset을 이용하여
-distance loss를 추가해  
+distance loss를 추가하여 계산
 
 
 ## Loss
