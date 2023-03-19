@@ -51,9 +51,9 @@ Get distance by using opencv, yolo_v2 for my study
 
 Iobj_i (exist)는 해당 셀 내에서 객체가 실제로 존재하는지(classification loss에 사용) , 존재시 1, 아닐경우 0
 
-Iobj_i (exist)는 스칼라인 confidence score(1(pr_object)*iou(bbox,gt_box))을 np형태로 가공.
 
-Iobj_ij(responsible) responsible bbox(최대 iou bbox)와 gt box를 비교할것이라는 뜻
+Iobj_ij(responsible)는 스칼라인 confidence score(1(pr_object)*iou(bbox,gt_box))을 np형태로 가공,
+ responsible bbox(최대 iou bbox)와 gt box를 비교할것이라는 뜻
 
 ### max iou를 가진 pred bbox를 선택하는것이 어려웠다.
 
