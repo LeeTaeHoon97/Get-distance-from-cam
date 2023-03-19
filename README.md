@@ -1,15 +1,13 @@
 # Get-distance-from-cam
 Get distance by using opencv, yolo_v2 for my study
 
-1.실시간 영상에서 카메라로부터 오브젝트 탐지, 
+카메라로부터 오브젝트 탐지, 
 
 거리계산 처음엔 카메라 두대를 이용하여 유클리드 거리를 구하는 방식을 생각하였는데, 단안 카메라를 이용한 거리측정에 대한 논문을 발견하여 이를 활용해보기로 하였다.
 
-2. x_hat y_hat ,w_hat, h_hat은 각 target값 , 즉 predict 된 bbox의 최대 iou box
+거리 정보가 포함된 Kitti dataset을 이용하여
+distance loss를 추가해  
 
-3. Loss fucntion 부분 시그마의 S와 B는 각각 셀의 개수와 바운딩 박스의 개수이다.
-
-4. 사용된 모든 모델, Loss, dataset은 직접 구현
 
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
