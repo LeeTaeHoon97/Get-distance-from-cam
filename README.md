@@ -74,6 +74,10 @@ unsqueeze를 이용하여 박스 idx 채널을 하나 추가하였고, torch.mod
 추가적으로. boackbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
 yolo v2 역시 제로베이스에서 학습하여 좋은 성능을 보이지 못함
 
+추후 기회가 된다면 같은 주제로 프로젝트를 만들고 싶다.
+
+
+
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
 ### (yolov2 : https://arxiv.org/pdf/1612.08242.pdf)
