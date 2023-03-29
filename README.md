@@ -87,7 +87,7 @@ loss graph
 
 바운딩 박스가 소실된 이유는 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져 소실된것이라 생각함.
 
-class score가 낮은 이유는 절대적인 epoch의 부족.
+class score가 낮은 이유는 절대적인 데이터와 epoch의 부족.
 
 추가적으로, backbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
 
