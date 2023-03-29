@@ -73,6 +73,9 @@ yolo의 모델 크기도 크고, 이미지 사이즈도 큰 편이라 하는 수
 ## 결론
 
 할 수 있는 범위 내 가장 큰 범위인 11epoch 학습 진행
+
+loss graph 
+
 ![image](https://user-images.githubusercontent.com/59239082/228606056-ccf3419c-50ea-4626-bd03-9e5e3184a1d1.png)
 
 정상적인 동작 확인
