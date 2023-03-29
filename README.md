@@ -72,6 +72,9 @@ yolo의 모델 크기도 크고, 이미지 사이즈도 큰 편이라 하는 수
 
 ## 결론
 
+할 수 있는 범위 내 가장 큰 범위인 11epoch 학습 진행
+![image](https://user-images.githubusercontent.com/59239082/228606056-ccf3419c-50ea-4626-bd03-9e5e3184a1d1.png)
+
 정상적인 동작 확인
 
 추가적으로, 논문을 참고하여 구현하여 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져, 
