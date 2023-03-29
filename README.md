@@ -77,11 +77,20 @@ yolo의 모델 크기도 크고, 이미지 사이즈도 큰 편이라 하는 수
 
 정상적인 동작 확인
 
-추가적으로, 논문을 참고하여 구현하여 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져, 
-좋은 성능을 보이지 못하리라 생각됨.
+![image](https://user-images.githubusercontent.com/59239082/228615576-e3c81471-91e6-49e8-ad9b-c54da0bda79d.png)
+![image](https://user-images.githubusercontent.com/59239082/228615640-e68420bb-a393-4a8d-9a0d-c2f1a4c524d1.png)
 
-추가적으로. boackbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
+해당 이미지를 예측하였으나 보시다시피 바운딩박스는 소실되었고, class score는 매우 낮음. (좌측 예측이 많은 이유는 5개의 앵커박스들에서 그나마 class score가 나온 데이터만 가져왔기 때문)
+
+바운딩 박스가 소실된 이유는 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져 소실된것이라 생각함.
+
+class score가 낮은 이유는 절대적인 epoch의 부족.
+
+추가적으로, boackbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
+
 yolo v2 역시 제로베이스에서 학습하여 좋은 성능을 보이지 못함
+
+비록 환경여건으로 인해 만족스러운 결과를 얻지는 못하였지만, 학습이 진행된다는 점은 확인되었으므로 어느정도 만족함
 
 추후 기회가 된다면 같은 주제로 프로젝트를 만들고 싶다.
 
