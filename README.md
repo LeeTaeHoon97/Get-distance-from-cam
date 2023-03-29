@@ -27,6 +27,10 @@ distance loss를 추가하여 계산
 ![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/209095271-ef03ce84-b937-47f2-8602-5f6e2b6644f8.png)
 
 
+## backward에 관하여
+
+논문 내에서 dataset을 imagenet과 cocodataset을 wordTree로 구성한뒤 Joint training 방식을 통해 
+특정 loss에 따라 backward를 다르게 구현합니다만, 이번 프로젝트에서는 Torch의 autograd를 사용하였습니다. 
 
 
 
