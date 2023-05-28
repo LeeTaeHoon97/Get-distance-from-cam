@@ -18,23 +18,23 @@ class YoloLoss(nn.Module):
         
     
     def forward(self, pred, target):
-        #pred per grid cell = [class],  [box c score][box(x,y,w,h)] ... ,[box5 c score], [box5] , [distance]  = 8+5*5+1=34
+        #pred per grid cell = [class],  [box c score][box(x,y,w,h)] ... ,[box5 c score], [box5] , [distance]  = (8+5+1)*5=70
         #target  =객체가 하나뿐인 이미지 한장의 경우 13개의 그리드 셀로 분류된뒤 13*13*14 의 형태를 가짐 [class],[Pc = confidence score],[x], [y], [w], [h],[distance]   =   1+6=7 (class 는 one hot encoding)  
         #이미지 크기는 앵커박스 도입을 위해 416 * 416으로 변경
         #target에는 c score가 들어가야하기때문에 이미지를 13x13으로 grid cell을 나눈다. 이후 target의 중심 좌표가 속한 grid cell값에 1을 준다. 
         #5개의 앵커박스에서 iou각각 산출 한 뒤 최대값을 찾아냄.
         batch_size=pred.data.size(0)
         
-        pred = pred.reshape(-1,self.S,self.S,self.C+self.B*5+1)         #pred는 모델이 산출하여나온 값이 flatten 되어있는 상태, 이를 13x13x34의 형태 reshape
+        pred = pred.reshape(-1,self.S,self.S,(self.C+self.B+1)*5)         #pred는 모델이 산출하여나온 값이 flatten 되어있는 상태, 이를 13x13x70의 형태 reshape
         
 
-        #0~7 = classes, 8=box1 c score , 9~12=pos , 13 = box2 c score ...... 28 = box 5 c score, 29~32 = box5 pos, 33= dist 
+        #0~7 = classes, 8=box1 c score , 9~12=pos 13=box1 dist, 14~21 =box 2 classes,22= box2 c score ,23~26 box2 pos, 27 = box2 dist...... 64 = box 5 c score, 65~68 = box5 pos, 69= dist 
 
         iou_b1 = self.iou(pred[..., 9:13],target[...,9:13])                         #target은 gt bbox로 5개의 앵커박스가 존재하는게 아닌 하나의 bbox를 가짐.
-        iou_b2 = self.iou(pred[..., 14:18],target[...,9:13])                        #target idx 0~7 = class, 8=Pc, 9~12 = pos , 13 = distance
-        iou_b3 = self.iou(pred[..., 19:23],target[...,9:13])
-        iou_b4 = self.iou(pred[..., 24:28],target[...,9:13])
-        iou_b5 = self.iou(pred[..., 29:33],target[...,9:13])
+        iou_b2 = self.iou(pred[..., 23:27],target[...,9:13])                        #target idx 0~7 = class, 8=Pc, 9~12 = pos , 13 = distance
+        iou_b3 = self.iou(pred[..., 37:41],target[...,9:13])
+        iou_b4 = self.iou(pred[..., 51:55],target[...,9:13])
+        iou_b5 = self.iou(pred[..., 65:69],target[...,9:13])
 
 
         ious= torch.cat([iou_b1.unsqueeze(0),iou_b2.unsqueeze(0),iou_b3.unsqueeze(0),iou_b4.unsqueeze(0),iou_b5.unsqueeze(0)],dim=0)
@@ -46,8 +46,8 @@ class YoloLoss(nn.Module):
                                                 # reshape에서 -1,S,S,output 형태로 나눠진 상태인데, 이 중 box c score만 가져오기 위해 unsqueeze(3)을 사용  
                                                
                                                 
-        bestbox=[pred[..., 8:13],pred[..., 13:18],pred[..., 18:23],pred[..., 23:28],pred[..., 28:33]]        #bestbox는 index(0~4)까지의 박스 인덱스이므로 해당 인덱스에 상응하는 리스트 생성
-                                    #해당 박스의 각 elem에는 pred anchor의 c score, x,y,w,h가 들어가 있음.                                    
+        bestbox=[pred[...,0:14],pred[...,14:28],pred[...,28:42],pred[...,42:56],pred[...,56:70]]        #bestbox는 index(0~4)까지의 박스 인덱스이므로 해당 인덱스에 상응하는 리스트 생성
+                                    #해당 박스의 각 elem에는 pred anchor의 classes c score, x,y,w,h, dist 가 들어가 있음.                                    
         
         #Localization Loss
         #Iobj_ij를 명시하지 않은 이유 : bestbox[box_index]를 가져온다는 점에서,box_index의 iobj값이 1이라는걸 시사하기 때문
@@ -57,7 +57,8 @@ class YoloLoss(nn.Module):
         
 
         x,y,w,h=target[...,9],target[...,10],target[...,11],target[...,12]
-        _, x_hat,y_hat,w_hat,h_hat=bestbox[max_iou_idx][...,0],bestbox[max_iou_idx][...,1],bestbox[max_iou_idx][...,2],bestbox[max_iou_idx][...,3],bestbox[max_iou_idx][...,4]         #에러 발생 시 bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감.
+        x_hat,y_hat,w_hat,h_hat=bestbox[max_iou_idx][...,9], bestbox[max_iou_idx][...,10], bestbox[max_iou_idx][...,11], bestbox[max_iou_idx][...,12]      
+         #에러 발생 시 bestbox의 형태가 어떤형태인지 확인할 필요가 있음, c score를 제외한 x y w h 가 hat변수에 들어감. 0~7 classes 8 c score 9 10 11 12 pos 13 dist
         
 
         localization_loss = exists_box * self.mse(torch.cat((x_hat, y_hat, w_hat, h_hat), dim=-1),
@@ -88,23 +89,29 @@ class YoloLoss(nn.Module):
 
 
         #Confidence Loss
-        c=target[...,8]
-        
+        c=exists_box
+
         conf_loss=0
         no_conf_loss=0
+
+
+
 
         # Iobj(ij) and Inoobj(ij)를 명시하지 않은 이유: 존재하든 존재하지 않든 모든경우를 다 계산하기 때문
         for i in range(len(bestbox)):  
             if i == max_iou_idx:  #최대 iou를 가진 anchor box일 경우. ,즉 responsible 또는 Iobj_ij
-                c_hat=bestbox[i][...,0]
+                c_hat=bestbox[i][...,8].unsqueeze(-1)
+
+        
+
                 conf_loss+=torch.pow((c-c_hat),2)
-            else:
-                c_hat=bestbox[i][...,0]
+            else:       
+                c_hat=0
                 no_conf_loss+=torch.pow((c-c_hat),2)
 
-        confidence_loss=sum(conf_loss) + (self.lambda_noobj * sum(no_conf_loss))
-
-        confidence_loss=confidence_loss.unsqueeze(-1)
+        confidence_loss=(conf_loss) + (self.lambda_noobj * (no_conf_loss))
+   
+        confidence_loss=confidence_loss
 
 
         #Classification Loss
@@ -123,8 +130,8 @@ class YoloLoss(nn.Module):
 
         #Dsitance Regression Loss
         z=target[...,13]
-        z_hat=pred[...,33]
-    
+        z_hat=bestbox[max_iou_idx][...,13]
+
 
         # print("self.lambda_zcoord shape",self.lambda_zcoord.shape)
 
@@ -133,8 +140,21 @@ class YoloLoss(nn.Module):
 
         distance_regression_loss=self.lambda_zcoord *distance_regression_loss
 
-        loss = localization_loss+ confidence_loss+ classification_loss + distance_regression_loss
 
+ 
+
+
+        loss = localization_loss + confidence_loss + classification_loss + distance_regression_loss
+
+        del iou_b1
+        del iou_b2
+        del iou_b3
+        del iou_b4
+        del iou_b5
+        del ious
+        del bestbox
+        del pred
+        print("del loss")
 
         return loss
         # return loss ,localization_loss,confidence_loss,classification_loss,distance_regression_loss
