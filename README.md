@@ -76,22 +76,22 @@ yolo의 모델 크기도 크고, 이미지 사이즈도 큰 편이라 하는 수
 
 ## 결론
 
-할 수 있는 범위 내 가장 큰 범위인 11epoch 학습 진행
+할 수 있는 범위 내 가장 큰 범위인 30epoch 학습 진행 (save load를 이용해 두 번에 걸쳐 학습)
 
 loss graph 
 
-![image](https://user-images.githubusercontent.com/59239082/228606056-ccf3419c-50ea-4626-bd03-9e5e3184a1d1.png)
+<!-- ![image](https://user-images.githubusercontent.com/59239082/228606056-ccf3419c-50ea-4626-bd03-9e5e3184a1d1.png) -->
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/656f9db8-4220-4f22-be6e-ddfc7d24509b)![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/14d8e581-b76d-4cfd-8d33-9fedce69f07e)
+
 
 정상적인 동작 확인
 
-![image](https://user-images.githubusercontent.com/59239082/228615576-e3c81471-91e6-49e8-ad9b-c54da0bda79d.png)
-![image](https://user-images.githubusercontent.com/59239082/228615640-e68420bb-a393-4a8d-9a0d-c2f1a4c524d1.png)
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/8730d63c-0934-40f1-aeae-e3166d05cc6c)
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/a29fe8ca-2cc1-4206-87ae-2b63cc3aad0b)
 
-해당 이미지를 예측하였으나 보시다시피 바운딩박스는 소실되었고, class score는 매우 낮음. (좌측 예측이 많은 이유는 5개의 앵커박스들에서 그나마 class score가 나온 데이터만 가져왔기 때문)
 
-바운딩 박스가 소실된 이유는 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져 소실된것이라 생각함.
+해당 이미지를 예측한 결과, 세밀한 보정은 아직 진행하지 않았으나 가로 293~331 영역, 세로 59~80 영역에서 탐지된 객체가 차로 표현되는 등 정상적인 작동을 확인하였음.
 
-class score가 낮은 이유는 절대적인 데이터와 epoch의 부족.
 
 추가적으로, backbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
 
