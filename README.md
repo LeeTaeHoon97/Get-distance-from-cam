@@ -8,6 +8,8 @@ Get distance by using opencv, yolo_v2 for my study
 거리 정보가 포함된 Kitti dataset을 이용하여
 distance loss를 추가하여 계산
 
+## Architecture
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/4a4034b5-dc44-423e-a0e2-0c8cd790b9ba)
 
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
