@@ -146,15 +146,15 @@ class YoloLoss(nn.Module):
 
         loss = localization_loss + confidence_loss + classification_loss + distance_regression_loss
 
-        del iou_b1
-        del iou_b2
-        del iou_b3
-        del iou_b4
-        del iou_b5
-        del ious
-        del bestbox
-        del pred
-        print("del loss")
+        # del iou_b1
+        # del iou_b2
+        # del iou_b3
+        # del iou_b4
+        # del iou_b5
+        # del ious
+        # del bestbox
+        # del pred
+        # print("del loss")
 
         return loss
         # return loss ,localization_loss,confidence_loss,classification_loss,distance_regression_loss

@@ -1,15 +1,15 @@
 # Get-distance-from-cam
 Get distance by using opencv, yolo_v2 for my study
 
-1.실시간 영상에서 카메라로부터 오브젝트 탐지, 
+카메라로부터 오브젝트 탐지, 
 
 거리계산 처음엔 카메라 두대를 이용하여 유클리드 거리를 구하는 방식을 생각하였는데, 단안 카메라를 이용한 거리측정에 대한 논문을 발견하여 이를 활용해보기로 하였다.
 
-2. x_hat y_hat ,w_hat, h_hat은 각 target값 , 즉 predict 된 bbox의 최대 iou box
+거리 정보가 포함된 Kitti dataset을 이용하여
+distance loss를 추가하여 계산
 
-3. Loss fucntion 부분 시그마의 S와 B는 각각 셀의 개수와 바운딩 박스의 개수이다.
-
-4. 사용된 모든 모델, Loss, dataset은 직접 구현
+## Architecture
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/4a4034b5-dc44-423e-a0e2-0c8cd790b9ba)
 
 ## Loss
 ![image](https://user-images.githubusercontent.com/59239082/176442109-bd89b592-96c7-4943-bab7-e195ad40afb3.png)
@@ -29,6 +29,10 @@ Get distance by using opencv, yolo_v2 for my study
 ![CodeCogsEqn (1)](https://user-images.githubusercontent.com/59239082/209095271-ef03ce84-b937-47f2-8602-5f6e2b6644f8.png)
 
 
+## backward에 관하여
+
+논문 내에서 dataset을 imagenet과 cocodataset을 wordTree로 구성한뒤 Joint training 방식을 통해 
+특정 loss에 따라 backward를 다르게 구현합니다만, 이번 프로젝트에서는 Torch의 autograd를 사용하였습니다. 
 
 
 
@@ -51,9 +55,9 @@ Get distance by using opencv, yolo_v2 for my study
 
 Iobj_i (exist)는 해당 셀 내에서 객체가 실제로 존재하는지(classification loss에 사용) , 존재시 1, 아닐경우 0
 
-Iobj_i (exist)는 스칼라인 confidence score(1(pr_object)*iou(bbox,gt_box))을 np형태로 가공.
 
-Iobj_ij(responsible) responsible bbox(최대 iou bbox)와 gt box를 비교할것이라는 뜻
+Iobj_ij(responsible)는 스칼라인 confidence score(1(pr_object)*iou(bbox,gt_box))을 np형태로 가공,
+ responsible bbox(최대 iou bbox)와 gt box를 비교할것이라는 뜻
 
 ### max iou를 가진 pred bbox를 선택하는것이 어려웠다.
 
@@ -63,18 +67,43 @@ max iou 자체는 torch.max를 이용하여 쉽게 찾을 수 있었지만, 이�
 
 unsqueeze를 이용하여 박스 idx 채널을 하나 추가하였고, torch.mode 를 이용하여 most frequency를 파악하여 best box를 선택하였다.
 
+### 학습을 돌려도 colab System memory가 초과해서 종료가 되었다.
+
+사진의 크기는 resize가 되어 416x416의 형태가 되고, 3채널 이미지를 가진다. 배치사이즈는 32로 가정시 즉 예상 이미지당 용량은 416x416x3x32x32bit 인데, 
+이는 0.066453504 gb이고 200장 기준 약 13gb가 사용된다. 
+
+메모리의 최대 크기는 12기가인데, 여기서 문제가 발생하는 것이였다.(추가로 Conv2D 혹은 Weighting, bias를 너무 많이 사용하는 모델을 사용시 발생하는 문제였음)
+
+yolo의 모델 크기도 크고, 이미지 사이즈도 큰 편이라 하는 수없이 사진의 갯수를 줄이고 학습 틈틈이  지우면서 학습하였다.
+
 ## 결론
 
-로컬 환경, colab 환경 모두 ram 및 gpu 부족으로 인해 학습에 어려움이 있어,
-5 epoch만 학습하였지만,
-학습시 노이즈를 포함한 loss 하향곡선을 보였다.
+할 수 있는 범위 내 가장 큰 범위인 30epoch 학습 진행 (save load를 이용해 두 번에 걸쳐 학습)
+
+loss graph 
+
+<!-- ![image](https://user-images.githubusercontent.com/59239082/228606056-ccf3419c-50ea-4626-bd03-9e5e3184a1d1.png) -->
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/656f9db8-4220-4f22-be6e-ddfc7d24509b)![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/14d8e581-b76d-4cfd-8d33-9fedce69f07e)
+
+
 정상적인 동작 확인
 
-추가적으로, 논문을 참고하여 구현하여 kitti dataset을 사용하였지만, kitti dataset의 resize과정에서 파일의 크기가 작아지고, bbox의 경계가 매우 얇아져, 
-좋은 성능을 보이지 못하리라 생각됨.
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/8730d63c-0934-40f1-aeae-e3166d05cc6c)
+![image](https://github.com/LeeTaeHoon97/Get-distance-from-cam/assets/59239082/a29fe8ca-2cc1-4206-87ae-2b63cc3aad0b)
 
-추가적으로. boackbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
+
+해당 이미지를 예측한 결과, 세밀한 보정은 아직 진행하지 않았으나 가로 293 ~ 331 영역, 세로 59 ~ 80 영역에서 탐지된 객체가 차로 표현되는 등 정상적인 작동을 확인하였음.
+
+
+추가적으로, backbone network를 다크넷을 구현하여 사용하였으나, pre-trained 모델이 아니였으므로 실제 모델만큼의 좋은 성능을 보이지 못했다고 생각
+
 yolo v2 역시 제로베이스에서 학습하여 좋은 성능을 보이지 못함
+
+비록 환경여건으로 인해 만족스러운 결과를 얻지는 못하였지만, 학습이 진행된다는 점은 확인되었으므로 어느정도 만족함
+
+추후 기회가 된다면 같은 주제로 프로젝트를 만들고 싶다.
+
+
 
 ## reference)
 ### (단안 카메라 논문 링크:http://jkros.org/_common/do.php?a=full&b=33&bidx=2194&aidx=26111)
